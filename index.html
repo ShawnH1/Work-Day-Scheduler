@@ -1,87 +1,107 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <link
-      rel="stylesheet"
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-    />
-    <link
-      rel="stylesheet"
-      href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
-      integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf"
-      crossorigin="anonymous"
-    />
-    <link
-      href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="style.css" />
-    <title>Work Day Scheduler</title>
-  </head>
+<html lang="en-us">
 
-  <body>
-    <header class="jumbotron">
-      <h1 class="display-3">Work Day Scheduler</h1>
-      <p class="lead">A simple calendar app for scheduling your work day</p>
-      <p id="currentDay" class="lead"></p>
-    </header>
-    <div class="container">
-      <!-- Timeblocks go here -->
-    </div>
+<head>
+  <meta charset="UTF-8" />
+  <title>Solved: jQuery To-do List with localStorage</title>
+</head>
 
+<body>
+  <h1>Solved: jQuery To-do List with localStorage</h1>
 
-    <!--Form to -->
-    <form>
-      <span id="task"
-        >To Do Item: <input id="task" type="text"/><input
-          id="add-task"
-          value="Add Item"
-          type="submit"
-      /></span>
-    </form>
+  <!-- Input Form -->
+  <form>
+    <span id="todo-item">To Do Item: <input id="to-do" type="text" /><input id="add-to-do" value="Add Item"
+        type="submit" /></span>
+  </form>
 
-    <!--jQuery-->
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+  <hr />
 
-    <!--moment.js-->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+  <!-- To-Do List -->
+  <div id="to-dos"></div>
 
+  <!-- jQuery -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
+  <!-- Script -->
 
-    <script type="text/javascript">
-    
-    //Declares a 'list' variable that holds the parsed tasks retrieved from localStorage.
-    //If none exists, it gives the blocks nothing as they try to pull from an empty array.
-      var list = JSON.parse(localStorage.getItem('taskList')) || [];
-    
-    // Render our tasks to the page
-    function renderTasks(list) {
-      //Empties out the html
-      $('tasks').empty();
+  <script type="text/javascript">
+    // Declares a 'list' variable that holds the parsed to-do items retrieved from 'localStorage'
+    // If there is nothing in 'localStorage', sets the 'list' to an empty array
+    var list = JSON.parse(localStorage.getItem('todolist')) || [];
 
-      //Iterates over the 'list'
-      for (var i = 0; list.length; i++) {
-        //Creates a new variable 'taskItem' = $('<p>');
-          var taskList = $('<p>');
-            taskList.text(list[i]);
+    // Renders our to-dos to the page
+    function renderTodos(list) {
+      // Empties out the html
+      $('#to-dos').empty();
 
-            //Creates a button to edit with an attribute called 'data-to-do' and a unique 'id'
+      // Iterates over the 'list'
+      for (var i = 0; i < list.length; i++) {
+        // Creates a new variable 'toDoItem' that will hold a "<p>" tag
+        // Sets the `list` item's value as text of this <p> element
+        var toDoItem = $('<p>');
+        toDoItem.text(list[i]);
+
+        // Creates a button `toDoClose` with an attribute called `data-to-do` and a unique `id`
+        var toDoClose = $('<button>');
+        toDoClose.attr('data-to-do', i);
+
+        // Gives the button a class called 'checkbox'
+        toDoClose.addClass('checkbox');
+
+        // Adds a checkmark symbol as its text value
+        toDoClose.text('✓');
+
+        // Adds the button to the `toDoItem`
+        toDoItem = toDoItem.prepend(toDoClose);
+
+        // Adds 'toDoItem' to the To-Do List div
+        $('#to-dos').append(toDoItem);
       }
-
-
-
-
-
     }
 
+    $('#add-to-do').on('click', function (event) {
+      event.preventDefault();
 
-    
-    
-    </script>
-  </body>
+      // Get the to-do "value" from the textbox and store it as a variable using `.val()` and `.trim()`
+      var toDoTask = $('#to-do')
+        .val()
+        .trim();
+
+      // Add the new to-do to our local 'list' variable
+      list.push(toDoTask);
+
+      // Update the to-dos on the page
+      renderTodos(list);
+
+      // Save the to-dos into localStorage
+      // We need to use JSON.stringify to turn the list from an array into a string
+      localStorage.setItem('todolist', JSON.stringify(list));
+
+      // Clear the textbox when done using `.val()`
+      $('#to-do').val('');
+    });
+
+    $(document).on('click', '.checkbox', function () {
+      // Get the `id` of the button from its data attribute and hold in a variable called 'toDoNumber'
+      var toDoNumber = $(this).attr('data-to-do');
+
+      // Delete the to-do with that `id` from our local `list` using `.splice()`
+      list.splice(toDoNumber, 1);
+
+      // Update the to-dos on the page
+      renderTodos(list);
+
+      // Save the to-dos into localStorage
+      // We need to use JSON.stringify to turn the list from an array into a string
+      localStorage.setItem('todolist', JSON.stringify(list));
+    });
+
+    // render our to-dos on page load
+    renderTasks(list);
+  </script>
+</body>
+
 </html>
 
 
